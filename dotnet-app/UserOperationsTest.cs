@@ -13,6 +13,9 @@ namespace dotnet_app.Tests
         [OneTimeSetUp]
         public async Task Setup()
         {
+            // Console.WriteLine("=== Starting UserOperationsTest Setup ===");
+            // Console.WriteLine($"Test execution time: {DateTime.UtcNow:o}");
+
             string connectionString = Environment.GetEnvironmentVariable("COSMOSDB_CONNECTION_STRING") ?? throw new InvalidOperationException("COSMOSDB_CONNECTION_STRING environment variable is not set.");
 
             string databaseName = Environment.GetEnvironmentVariable("COSMOSDB_DATABASE_NAME") ?? throw new InvalidOperationException("COSMOSDB_DATABASE_NAME environment variable is not set.");
@@ -34,8 +37,8 @@ namespace dotnet_app.Tests
             database = await client.CreateDatabaseIfNotExistsAsync(databaseName);
             container = await database.CreateContainerIfNotExistsAsync(containerName, "/id");
 
-            Console.WriteLine("Created database: " + database.Id);
-            Console.WriteLine("Created container: " + container.Id);
+            // Console.WriteLine("Database Created" + database.Id);
+            // Console.WriteLine("Container Created" + container.Id);
         }
 
         [OneTimeTearDown]
@@ -48,6 +51,8 @@ namespace dotnet_app.Tests
             }
             client?.Dispose();
         }
+        const string TestUser1 = "user42@example.com";
+        const string TestUser2 = "user43@example.com";
 
         [Test]
         public async Task TestCreateUser()
@@ -55,7 +60,7 @@ namespace dotnet_app.Tests
             User user = new()
             {
                 id = Guid.NewGuid().ToString(),
-                email = "user42@example.com",
+                email = TestUser1,
                 active = true
             };
 
@@ -74,7 +79,7 @@ namespace dotnet_app.Tests
             User user = new()
             {
                 id = userId,
-                email = "user43@example.com",
+                email = TestUser2,
                 active = true
             };
 
@@ -87,7 +92,7 @@ namespace dotnet_app.Tests
 
             User readUser = await UserOperations.ReadUserAsync(container, userId);
             Assert.AreEqual(userId, readUser.id);
-            Assert.AreEqual("user43@example.com", readUser.email);
+            Assert.AreEqual(TestUser2, readUser.email);
             Assert.IsTrue(readUser.active);
         }
     }

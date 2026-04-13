@@ -16,7 +16,7 @@ jobs:
 
     strategy:
       matrix:
-        os: [ubuntu-latest, ubuntu-24.04-arm]
+        os: [ubuntu-latest]  # removed ubuntu-24.04-arm until Cosmos DB Emulator supports it
 
     services:
       cosmosdb:
